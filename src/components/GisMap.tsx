@@ -44,6 +44,18 @@ export default function GisMap() {
 			});
 			mapRef.current = map;
 
+			// Hide the spinner once the map finishes its first render.
+			const finishLoading = () => {
+				if (!destroyed) setIsLoading(false);
+			};
+			try {
+				map.once?.("idle", finishLoading);
+			} catch {
+				/* noop */
+			}
+			// Fallback in case the "idle" event never fires
+			setTimeout(finishLoading, 5000);
+
 			// Double rAF ensures browser finishes layout/paint before resize()
 			requestAnimationFrame(() => {
 				requestAnimationFrame(() => {
@@ -148,6 +160,14 @@ export default function GisMap() {
 		>
 			<div ref={containerRef} style={{ width: "100%", height: "100%" }} />
 
+			{/* Loading spinner — shown until the map's first render */}
+			{isLoading && (
+				<div style={S.spinnerOverlay}>
+					<div style={S.spinner} />
+					<style>{"@keyframes krt-spin{to{transform:rotate(360deg)}}"}</style>
+				</div>
+			)}
+
 			{/* Control buttons (top-left) */}
 			<div style={S.controls}>
 				<button
@@ -157,6 +177,14 @@ export default function GisMap() {
 					style={{ ...S.ctrlBtn, ...(is3D ? S.ctrlBtnActive : null) }}
 				>
 					{is3D ? "2D" : "3D"}
+				</button>
+				<button
+					type="button"
+					title={isSatellite ? "Схема" : "Спутник"}
+					onClick={handleSatellite}
+					style={{ ...S.ctrlBtn, ...(isSatellite ? S.ctrlBtnActive : null) }}
+				>
+					{isSatellite ? "Схема" : "Спутник"}
 				</button>
 			</div>
 		</div>
@@ -196,5 +224,24 @@ const S = {
 	ctrlBtnActive: {
 		background: "#2563eb",
 		color: "#fff"
+	} as React.CSSProperties,
+
+	spinnerOverlay: {
+		position: "absolute",
+		inset: 0,
+		zIndex: 1100,
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		background: "#0b0f14"
+	} as React.CSSProperties,
+
+	spinner: {
+		width: 44,
+		height: 44,
+		borderRadius: "50%",
+		border: "4px solid rgba(255,255,255,0.2)",
+		borderTopColor: "#2563eb",
+		animation: "krt-spin 0.8s linear infinite"
 	} as React.CSSProperties
 };
