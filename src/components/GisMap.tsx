@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	MAPGL_API_KEY,
-	MAPGL_STYLE_IMMERSIVE,
 	MAPGL_STYLE_SATELLITE,
 	loadMapGlScript,
 	destroyMapGLObject
@@ -21,7 +20,6 @@ export default function GisMap() {
 	const mapRef = useRef<any>(null);
 
 	const [is3D, setIs3D] = useState(false);
-	const [isSatellite, setIsSatellite] = useState(true);
 	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
@@ -130,23 +128,6 @@ export default function GisMap() {
 	}, []);
 
 	// Satellite (sputnik) on/off: swap the base style.
-	const handleSatellite = useCallback(() => {
-		const map = mapRef.current;
-		if (!map) return;
-		setIsSatellite((prev) => {
-			const next = !prev;
-			try {
-				map.setStyle(next ? "satellite" : "basic");
-			} catch {
-				try {
-					map.setStyleById(next ? MAPGL_STYLE_SATELLITE : MAPGL_STYLE_IMMERSIVE);
-				} catch {
-					/* noop */
-				}
-			}
-			return next;
-		});
-	}, []);
 
 	return (
 		<div
@@ -177,14 +158,6 @@ export default function GisMap() {
 					style={{ ...S.ctrlBtn, ...(is3D ? S.ctrlBtnActive : null) }}
 				>
 					{is3D ? "2D" : "3D"}
-				</button>
-				<button
-					type="button"
-					title={isSatellite ? "Схема" : "Спутник"}
-					onClick={handleSatellite}
-					style={{ ...S.ctrlBtn, ...(isSatellite ? S.ctrlBtnActive : null) }}
-				>
-					{isSatellite ? "Схема" : "Спутник"}
 				</button>
 			</div>
 		</div>
