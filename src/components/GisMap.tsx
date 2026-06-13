@@ -8,9 +8,10 @@ import {
 import { UZ_COORDINATES } from "../constants/uzbekistanBoundary";
 import { useProjectsGeoJson } from "../features/projects/hooks/useProjectsGeoJson";
 import { useProjectsLayer } from "../features/projects/hooks/useProjectsLayer";
-import ProjectInfoPanel from "../features/projects/components/ProjectInfoPanel";
 import ProjectSearch from "../features/projects/components/ProjectSearch";
 import MapLegend from "../features/projects/components/MapLegend";
+import TerritoryDrawer from "../features/territories/components/TerritoryDrawer";
+import { useTerritories } from "../features/territories/hooks/useTerritories";
 import { PROJECTS_FIT_ZOOM } from "../features/projects/projectsConfig";
 import { boundsCenter, collectionBounds, featureCenter } from "../shared/lib/geo";
 import type { ProjectFeature, ProjectStatus } from "../features/projects/types";
@@ -37,6 +38,7 @@ export default function GisMap() {
 	const [selected, setSelected] = useState<ProjectFeature | null>(null);
 
 	const { data: projects } = useProjectsGeoJson();
+	const territories = useTerritories();
 
 	useEffect(() => {
 		let destroyed = false;
@@ -222,7 +224,14 @@ export default function GisMap() {
 					<MapLegend count={projects.features.length} statuses={statuses} />
 				</>
 			)}
-			{selected && <ProjectInfoPanel feature={selected} onClose={() => setSelected(null)} />}
+			<TerritoryDrawer
+				open={!!selected}
+				feature={selected}
+				territory={selected ? territories.getTerritory(selected.properties.id) : null}
+				onClose={() => setSelected(null)}
+				onAddMetric={(m) => selected && territories.addMetric(selected.properties.id, m)}
+				onRemoveMetric={(metricId) => selected && territories.removeMetric(selected.properties.id, metricId)}
+			/>
 		</div>
 	);
 }
