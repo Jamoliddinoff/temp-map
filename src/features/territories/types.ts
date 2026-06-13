@@ -2,13 +2,13 @@
 
 export interface TerritoryMetric {
 	id: string;
-	name: string; // e.g. "Площадь застройки"
+	name: string; // e.g. "Қурилиш майдони"
 	value: string; // e.g. "15 Га"
 }
 
 export interface TerritoryRecord {
 	id: string; // territory code, e.g. "MQ-0007"
-	name: string; // e.g. "Территория №7"
+	name: string; // e.g. "Ҳудуд №7"
 	description?: string;
 	metrics: TerritoryMetric[];
 }

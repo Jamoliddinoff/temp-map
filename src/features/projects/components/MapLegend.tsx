@@ -10,11 +10,11 @@ interface Props {
 export default function MapLegend({ count, statuses }: Props) {
 	return (
 		<div style={S.box}>
-			<div style={S.title}>Проекты · {count}</div>
+			<div style={S.title}>Лойиҳалар · {count}</div>
 			{statuses.map((s) => (
 				<Item key={s} color={STATUS_STYLE[s].stroke} fill={STATUS_STYLE[s].fill} label={STATUS_STYLE[s].label} />
 			))}
-			<Item color={MISMATCH_STROKE} fill="transparent" label="Расхождение площади" dashed />
+			<Item color={MISMATCH_STROKE} fill="transparent" label="Майдон тафовути" dashed />
 		</div>
 	);
 }

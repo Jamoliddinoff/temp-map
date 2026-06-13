@@ -2,35 +2,43 @@ import { useCallback, useState } from "react";
 import { TERRITORIES_SEED, defaultTerritoryName } from "../territoriesData";
 import type { TerritoryMetric, TerritoryRecord } from "../types";
 
-const STORAGE_KEY = "territories-v1";
+// Only user metrics are persisted; names/descriptions always come from the
+// seed file, so translations/edits there apply immediately.
+const STORAGE_KEY = "territories-metrics-v1";
 
-type Store = Record<string, TerritoryRecord>;
+type MetricStore = Record<string, TerritoryMetric[]>;
 
 function genId(): string {
 	return globalThis.crypto?.randomUUID?.() ?? `m_${Date.now()}_${Math.round(Math.random() * 1e6)}`;
 }
 
-/** Build the initial store from the seed file, then overlay anything saved locally. */
-function buildInitial(): Store {
-	const store: Store = {};
-	for (const s of TERRITORIES_SEED) {
-		store[s.id] = {
+// Stable seed records (metric ids generated once at module load).
+const SEED_RECORDS: Record<string, TerritoryRecord> = Object.fromEntries(
+	TERRITORIES_SEED.map((s) => [
+		s.id,
+		{
 			id: s.id,
 			name: s.name ?? defaultTerritoryName(s.id),
 			description: s.description,
 			metrics: (s.metrics ?? []).map((m) => ({ id: genId(), ...m }))
-		};
-	}
-	try {
-		const saved = localStorage.getItem(STORAGE_KEY);
-		if (saved) Object.assign(store, JSON.parse(saved) as Store);
-	} catch {
-		/* ignore corrupt storage */
-	}
-	return store;
+		}
+	])
+);
+
+function baseRecord(id: string): TerritoryRecord {
+	return SEED_RECORDS[id] ?? { id, name: defaultTerritoryName(id), metrics: [] };
 }
 
-function persist(store: Store) {
+function loadOverrides(): MetricStore {
+	try {
+		const saved = localStorage.getItem(STORAGE_KEY);
+		return saved ? (JSON.parse(saved) as MetricStore) : {};
+	} catch {
+		return {};
+	}
+}
+
+function persist(store: MetricStore) {
 	try {
 		localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
 	} catch {
@@ -45,21 +53,23 @@ export interface TerritoriesApi {
 }
 
 /**
- * Frontend-only territory store: seeded from territoriesData.ts, persisted to
- * localStorage so added metrics survive reloads. No backend involved.
+ * Frontend-only territory store: names/descriptions from territoriesData.ts,
+ * user-added metrics persisted to localStorage. No backend involved.
  */
 export function useTerritories(): TerritoriesApi {
-	const [store, setStore] = useState<Store>(buildInitial);
+	const [overrides, setOverrides] = useState<MetricStore>(loadOverrides);
 
 	const getTerritory = useCallback(
-		(id: string): TerritoryRecord =>
-			store[id] ?? { id, name: defaultTerritoryName(id), metrics: [] },
-		[store]
+		(id: string): TerritoryRecord => {
+			const base = baseRecord(id);
+			return overrides[id] ? { ...base, metrics: overrides[id] } : base;
+		},
+		[overrides]
 	);
 
-	const update = useCallback((id: string, fn: (rec: TerritoryRecord) => TerritoryRecord) => {
-		setStore((prev) => {
-			const current = prev[id] ?? { id, name: defaultTerritoryName(id), metrics: [] };
+	const setMetrics = useCallback((id: string, fn: (current: TerritoryMetric[]) => TerritoryMetric[]) => {
+		setOverrides((prev) => {
+			const current = prev[id] ?? baseRecord(id).metrics;
 			const next = { ...prev, [id]: fn(current) };
 			persist(next);
 			return next;
@@ -69,16 +79,16 @@ export function useTerritories(): TerritoriesApi {
 	const addMetric = useCallback(
 		(id: string, metric: { name: string; value: string }) => {
 			const m: TerritoryMetric = { id: genId(), name: metric.name.trim(), value: metric.value.trim() };
-			update(id, (rec) => ({ ...rec, metrics: [...rec.metrics, m] }));
+			setMetrics(id, (current) => [...current, m]);
 		},
-		[update]
+		[setMetrics]
 	);
 
 	const removeMetric = useCallback(
 		(id: string, metricId: string) => {
-			update(id, (rec) => ({ ...rec, metrics: rec.metrics.filter((m) => m.id !== metricId) }));
+			setMetrics(id, (current) => current.filter((m) => m.id !== metricId));
 		},
-		[update]
+		[setMetrics]
 	);
 
 	return { getTerritory, addMetric, removeMetric };

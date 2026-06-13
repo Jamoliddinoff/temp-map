@@ -15,9 +15,9 @@ export interface StatusStyle {
 }
 
 export const STATUS_STYLE: Record<ProjectStatus, StatusStyle> = {
-	planned: { label: "Планируется", fill: "rgba(251,191,36,0.30)", stroke: "#B45309" },
-	active: { label: "В работе", fill: "rgba(59,130,246,0.32)", stroke: "#1D4ED8" },
-	done: { label: "Завершён", fill: "rgba(34,197,94,0.32)", stroke: "#15803D" }
+	planned: { label: "Режалаштирилган", fill: "rgba(251,191,36,0.30)", stroke: "#B45309" },
+	active: { label: "Жараёнда", fill: "rgba(59,130,246,0.32)", stroke: "#1D4ED8" },
+	done: { label: "Якунланган", fill: "rgba(34,197,94,0.32)", stroke: "#15803D" }
 };
 
 export const SELECTED_STYLE = { fill: "rgba(59,130,246,0.55)", stroke: "#1E3A8A", strokeWidth: 4 };

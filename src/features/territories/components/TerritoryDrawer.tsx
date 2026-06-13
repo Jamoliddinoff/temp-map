@@ -48,9 +48,9 @@ export default function TerritoryDrawer({
 	const metrics = territory?.metrics ?? [];
 
 	const columns = [
-		{ title: "Критерий", dataIndex: "name", key: "name", ellipsis: true },
+		{ title: "Мезон", dataIndex: "name", key: "name", ellipsis: true },
 		{
-			title: "Значение",
+			title: "Қиймат",
 			dataIndex: "value",
 			key: "value",
 			width: 120,
@@ -62,12 +62,12 @@ export default function TerritoryDrawer({
 			width: 44,
 			render: (_: unknown, row: TerritoryMetric) => (
 				<Popconfirm
-					title="Удалить показатель?"
-					okText="Удалить"
-					cancelText="Отмена"
+					title="Кўрсаткич ўчирилсинми?"
+					okText="Ўчириш"
+					cancelText="Бекор қилиш"
 					onConfirm={() => onRemoveMetric(row.id)}
 				>
-					<Button type="text" size="small" danger icon={<DeleteOutlined />} aria-label="Удалить" />
+					<Button type="text" size="small" danger icon={<DeleteOutlined />} aria-label="Ўчириш" />
 				</Popconfirm>
 			)
 		}
@@ -89,12 +89,12 @@ export default function TerritoryDrawer({
 						<span style={{ fontSize: 15 }}>{territory?.name}</span>
 					</Space>
 				) : (
-					"Территория"
+					"Ҳудуд"
 				)
 			}
 			footer={
 				<Button type="primary" block icon={<PlusOutlined />} onClick={() => setFormOpen(true)} disabled={!feature}>
-					Добавить показатель
+					Кўрсаткич қўшиш
 				</Button>
 			}
 		>
@@ -102,13 +102,13 @@ export default function TerritoryDrawer({
 				<>
 					<Space size="large" style={{ width: "100%", justifyContent: "space-between" }}>
 						<Statistic
-							title="Площадь (факт)"
+							title="Майдон (факт)"
 							value={p.area_test_ha ?? "—"}
 							suffix={p.area_test_ha == null ? "" : "Га"}
 							prefix={<AreaChartOutlined style={{ color: "#1D4ED8" }} />}
 						/>
 						<Statistic
-							title="№ в реестре"
+							title="Рўйхат рақами"
 							value={p.order_no ?? "—"}
 							prefix={<EnvironmentOutlined style={{ color: "#1D4ED8" }} />}
 						/>
@@ -127,24 +127,24 @@ export default function TerritoryDrawer({
 						size="small"
 						bordered
 						items={[
-							{ key: "code", label: "Код территории", children: p.id },
+							{ key: "code", label: "Ҳудуд коди", children: p.id },
 							{
 								key: "type",
-								label: "Тип геометрии",
+								label: "Геометрия тури",
 								children: feature.geometry.type === "MultiPolygon" ? "Мультиполигон" : "Полигон"
 							},
-							{ key: "decl", label: "Площадь (проект)", children: fmtHa(p.area_declared_ha) }
+							{ key: "decl", label: "Майдон (лойиҳа)", children: fmtHa(p.area_declared_ha) }
 						]}
 					/>
 
 					<Divider titlePlacement="start" style={{ margin: "20px 0 12px" }}>
-						Показатели
+						Кўрсаткичлар
 					</Divider>
 
 					{metrics.length === 0 ? (
 						<Empty
 							image={Empty.PRESENTED_IMAGE_SIMPLE}
-							description="Показатели не добавлены"
+							description="Кўрсаткичлар қўшилмаган"
 							style={{ margin: "16px 0" }}
 						/>
 					) : (

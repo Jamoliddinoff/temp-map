@@ -19,38 +19,38 @@ export default function AddMetricModal({ open, onCancel, onSubmit }: Props) {
 	const handleOk = async () => {
 		const values = await form.validateFields();
 		onSubmit({ name: values.name.trim(), value: values.value.trim() });
-		message.success("Показатель добавлен");
+		message.success("Кўрсаткич қўшилди");
 		form.resetFields();
 		onCancel();
 	};
 
 	return (
 		<Modal
-			title="Добавить показатель"
+			title="Кўрсаткич қўшиш"
 			open={open}
 			onOk={handleOk}
 			onCancel={() => {
 				form.resetFields();
 				onCancel();
 			}}
-			okText="Сохранить"
-			cancelText="Отмена"
+			okText="Сақлаш"
+			cancelText="Бекор қилиш"
 			destroyOnHidden
 		>
 			<Form form={form} layout="vertical" requiredMark="optional" preserve={false}>
 				<Form.Item
 					name="name"
-					label="Название критерия"
-					rules={[{ required: true, message: "Укажите название" }]}
+					label="Мезон номи"
+					rules={[{ required: true, message: "Номни киритинг" }]}
 				>
-					<Input placeholder="Например: Площадь застройки" autoFocus />
+					<Input placeholder="Масалан: Қурилиш майдони" autoFocus />
 				</Form.Item>
 				<Form.Item
 					name="value"
-					label="Значение"
-					rules={[{ required: true, message: "Укажите значение" }]}
+					label="Қиймат"
+					rules={[{ required: true, message: "Қийматни киритинг" }]}
 				>
-					<Input placeholder="Например: 15 Га" />
+					<Input placeholder="Масалан: 15 Га" />
 				</Form.Item>
 			</Form>
 		</Modal>

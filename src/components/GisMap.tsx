@@ -209,7 +209,7 @@ export default function GisMap() {
 			<div style={S.controls}>
 				<button
 					type="button"
-					title={is3D ? "Переключить в 2D" : "Переключить в 3D"}
+					title={is3D ? "2D режимга ўтиш" : "3D режимга ўтиш"}
 					onClick={handle3DToggle}
 					style={{ ...S.ctrlBtn, ...(is3D ? S.ctrlBtnActive : null) }}
 				>

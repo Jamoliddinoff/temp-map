@@ -27,8 +27,8 @@ export default function ProjectSearch({ features, onPick }: Props) {
 				}}
 				onFocus={() => setOpen(true)}
 				onBlur={() => setTimeout(() => setOpen(false), 150)}
-				placeholder="Поиск по MQ-номеру…"
-				aria-label="Поиск проекта"
+				placeholder="MQ рақами бўйича қидириш…"
+				aria-label="Лойиҳани қидириш"
 				style={S.input}
 			/>
 			{open && matches.length > 0 && (
@@ -45,7 +45,7 @@ export default function ProjectSearch({ features, onPick }: Props) {
 								}}
 							>
 								<span style={S.itemName}>{f.properties.name}</span>
-								<span style={S.itemMeta}>{f.properties.area_test_ha ?? "—"} га</span>
+								<span style={S.itemMeta}>{f.properties.area_test_ha ?? "—"} Га</span>
 							</button>
 						</li>
 					))}
