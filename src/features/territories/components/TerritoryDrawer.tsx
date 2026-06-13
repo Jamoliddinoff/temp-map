@@ -31,12 +31,6 @@ interface Props {
 	onRemoveMetric: (metricId: string) => void;
 }
 
-const STATUS_LABEL: Record<string, string> = {
-	planned: "Планируется",
-	active: "В работе",
-	done: "Завершён"
-};
-
 const fmtHa = (v: number | null) => (v == null ? "—" : `${v} Га`);
 
 /** Professional GIS/Urban-planning territory card with metric management. */
@@ -139,22 +133,7 @@ export default function TerritoryDrawer({
 								label: "Тип геометрии",
 								children: feature.geometry.type === "MultiPolygon" ? "Мультиполигон" : "Полигон"
 							},
-							{ key: "decl", label: "Площадь (проект)", children: fmtHa(p.area_declared_ha) },
-							{ key: "calc", label: "Площадь (расчёт)", children: fmtHa(p.area_computed_ha) },
-							{
-								key: "status",
-								label: "Статус",
-								children: <Tag color="processing">{STATUS_LABEL[p.status] ?? p.status}</Tag>
-							},
-							{
-								key: "mismatch",
-								label: "Расхождение площади",
-								children: p.area_mismatch ? (
-									<Tag color="error">есть</Tag>
-								) : (
-									<Tag color="success">нет</Tag>
-								)
-							}
+							{ key: "decl", label: "Площадь (проект)", children: fmtHa(p.area_declared_ha) }
 						]}
 					/>
 
