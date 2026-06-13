@@ -6,6 +6,18 @@ import {
 	destroyMapGLObject
 } from "../utils/mapgl";
 import { UZ_COORDINATES } from "../constants/uzbekistanBoundary";
+import { useProjectsGeoJson } from "../features/projects/hooks/useProjectsGeoJson";
+import { useProjectsLayer } from "../features/projects/hooks/useProjectsLayer";
+import ProjectInfoPanel from "../features/projects/components/ProjectInfoPanel";
+import ProjectSearch from "../features/projects/components/ProjectSearch";
+import MapLegend from "../features/projects/components/MapLegend";
+import { PROJECTS_FIT_ZOOM } from "../features/projects/projectsConfig";
+import { boundsCenter, collectionBounds, featureCenter } from "../shared/lib/geo";
+import type { ProjectFeature, ProjectStatus } from "../features/projects/types";
+
+// 2GIS MapGL handles are untyped (3rd-party global), so `any` is unavoidable here.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type MapglMap = any;
 
 // Tashkent center [lng, lat]
 const UZ_CENTER: [number, number] = [69.279, 41.319];
@@ -17,14 +29,18 @@ const UZ_CENTER: [number, number] = [69.279, 41.319];
  */
 export default function GisMap() {
 	const containerRef = useRef<HTMLDivElement>(null);
-	const mapRef = useRef<any>(null);
+	const mapRef = useRef<MapglMap>(null);
 
 	const [is3D, setIs3D] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
+	const [mapInstance, setMapInstance] = useState<MapglMap>(null);
+	const [selected, setSelected] = useState<ProjectFeature | null>(null);
+
+	const { data: projects } = useProjectsGeoJson();
 
 	useEffect(() => {
 		let destroyed = false;
-		const maskRef = { current: null as any };
+		const maskRef = { current: null as MapglMap };
 
 		const createMap = () => {
 			if (destroyed || mapRef.current || !containerRef.current || !window.mapgl) return;
@@ -41,6 +57,7 @@ export default function GisMap() {
 				zoomControl: "bottomRight"
 			});
 			mapRef.current = map;
+			setMapInstance(map);
 
 			// Hide the spinner once the map finishes its first render.
 			const finishLoading = () => {
@@ -112,8 +129,45 @@ export default function GisMap() {
 			destroyMapGLObject(maskRef.current);
 			destroyMapGLObject(mapRef.current);
 			mapRef.current = null;
+			setMapInstance(null);
 		};
 	}, []);
+
+	// Draw the project polygons + labels and the selected-feature highlight.
+	useProjectsLayer(mapInstance, projects ?? null, {
+		selectedId: selected?.properties.id ?? null,
+		onSelect: setSelected
+	});
+
+	// Once data + map are ready, frame the projects extent (Tashkent region).
+	useEffect(() => {
+		if (!mapInstance || !projects) return;
+		const b = collectionBounds(projects);
+		if (!b) return;
+		try {
+			mapInstance.setCenter(boundsCenter(b));
+			mapInstance.setZoom(PROJECTS_FIT_ZOOM);
+		} catch {
+			/* noop */
+		}
+	}, [mapInstance, projects]);
+
+	// Search pick: select + fly the camera to the feature.
+	const flyTo = useCallback((f: ProjectFeature) => {
+		const map = mapRef.current;
+		if (!map) return;
+		setSelected(f);
+		try {
+			map.setCenter(featureCenter(f));
+			map.setZoom(13);
+		} catch {
+			/* noop */
+		}
+	}, []);
+
+	const statuses: ProjectStatus[] = projects
+		? Array.from(new Set(projects.features.map((f) => f.properties.status)))
+		: [];
 
 	// 3D on/off: tilt the camera (pitch). Reset rotation when going flat.
 	const handle3DToggle = useCallback(() => {
@@ -160,6 +214,15 @@ export default function GisMap() {
 					{is3D ? "2D" : "3D"}
 				</button>
 			</div>
+
+			{/* Projects: search, legend, popup */}
+			{projects && projects.features.length > 0 && (
+				<>
+					<ProjectSearch features={projects.features} onPick={flyTo} />
+					<MapLegend count={projects.features.length} statuses={statuses} />
+				</>
+			)}
+			{selected && <ProjectInfoPanel feature={selected} onClose={() => setSelected(null)} />}
 		</div>
 	);
 }

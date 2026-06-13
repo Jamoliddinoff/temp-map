@@ -1,0 +1,127 @@
+{
+  "source": "public/data/projects.kml",
+  "parsedAt": null,
+  "totalPlacemarks": 18,
+  "issues": {
+    "unclosed": [],
+    "selfIntersecting": [],
+    "rewound": [],
+    "duplicateIds": [],
+    "duplicateGeometry": [],
+    "overlaps": [],
+    "attributeMismatch": [
+      {
+        "id": "MQ-0048",
+        "yerMaydoni": 9.9,
+        "maydonTest": 10
+      },
+      {
+        "id": "MQ-0016",
+        "yerMaydoni": 100,
+        "maydonTest": 110.3
+      }
+    ]
+  },
+  "features": [
+    {
+      "id": "MQ-0044",
+      "type": "Polygon",
+      "area_computed_ha": 80.43
+    },
+    {
+      "id": "MQ-0048",
+      "type": "Polygon",
+      "area_computed_ha": 10
+    },
+    {
+      "id": "MQ-0001",
+      "type": "Polygon",
+      "area_computed_ha": 150.1
+    },
+    {
+      "id": "MQ-0002",
+      "type": "Polygon",
+      "area_computed_ha": 58.07
+    },
+    {
+      "id": "MQ-0004",
+      "type": "Polygon",
+      "area_computed_ha": 73.53
+    },
+    {
+      "id": "MQ-0005",
+      "type": "Polygon",
+      "area_computed_ha": 245.24
+    },
+    {
+      "id": "MQ-0007",
+      "type": "Polygon",
+      "area_computed_ha": 83.04
+    },
+    {
+      "id": "MQ-0011",
+      "type": "Polygon",
+      "area_computed_ha": 71.62
+    },
+    {
+      "id": "MQ-0012",
+      "type": "Polygon",
+      "area_computed_ha": 13.99
+    },
+    {
+      "id": "MQ-0014",
+      "type": "Polygon",
+      "area_computed_ha": 58.02
+    },
+    {
+      "id": "MQ-0015",
+      "type": "Polygon",
+      "area_computed_ha": 44.7
+    },
+    {
+      "id": "MQ-0016",
+      "type": "Polygon",
+      "area_computed_ha": 110.37
+    },
+    {
+      "id": "MQ-0017",
+      "type": "Polygon",
+      "area_computed_ha": 33.56
+    },
+    {
+      "id": "MQ-0022",
+      "type": "Polygon",
+      "area_computed_ha": 10.61
+    },
+    {
+      "id": "MQ-0023",
+      "type": "Polygon",
+      "area_computed_ha": 37.08
+    },
+    {
+      "id": "MQ-0019",
+      "type": "Polygon",
+      "area_computed_ha": 74.54
+    },
+    {
+      "id": "MQ-0059",
+      "type": "Polygon",
+      "area_computed_ha": 234
+    },
+    {
+      "id": "MQ-0026",
+      "type": "MultiPolygon",
+      "area_computed_ha": 4.53
+    }
+  ],
+  "summary": {
+    "output_features": 18,
+    "unclosed": 0,
+    "self_intersecting": 0,
+    "rewound": 0,
+    "duplicate_ids": 0,
+    "duplicate_geometry": 0,
+    "overlaps": 0,
+    "attribute_mismatch": 2
+  }
+}
